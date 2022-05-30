@@ -33,6 +33,16 @@ namespace API
             services.AddApplicationServices();
 
             services.AddSwaggerDocumentation();
+
+            // Чтобы выполнять запросы из приложения с одного адреса (или домена) к приложению, 
+            // которое размещено по другому адресу.
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +67,9 @@ namespace API
             app.UseRouting();
 
             app.UseStaticFiles();
+
+            // Используется до авторизации:
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
