@@ -1,5 +1,8 @@
+using Core.Entities.Identity;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,18 +23,24 @@ namespace API
 
             using (var scope = host.Services.CreateScope())
             {
-                var service = scope.ServiceProvider;
-                var loggerFactory = service.GetRequiredService<ILoggerFactory>();
+                var services = scope.ServiceProvider;
+                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
                 try
                 {
-                    var context = service.GetRequiredService<StoreContext>();
+                    var context = services.GetRequiredService<StoreContext>();
                     
                     // Создание базы данных при запуске программы.
                     await context.Database.MigrateAsync();
 
                     // Заполнение БД данными.
                     await StoreContextSeed.SeedAsync(context, loggerFactory);
+
+                    // Заполнение БД данными пользователей.
+                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                    var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+                    await identityContext.Database.MigrateAsync();
+                    await AppIdentityDbContextSeed.SeedUsersAsync(userManager);
                 }
                 catch (Exception ex)
                 {

@@ -2,6 +2,7 @@ using API.Extensions;
 using API.Helpers;
 using API.Middleware;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,11 @@ namespace API
                 x.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
             
 
+            services.AddDbContext<AppIdentityDbContext>(x => {
+                x.UseSqlite(_configuration.GetConnectionString("IdentityConnection"));
+            });
+
+
             // Setting up Redis
             services.AddSingleton<IConnectionMultiplexer>(c => {
                 var configuration = ConfigurationOptions.Parse(_configuration
@@ -41,6 +47,8 @@ namespace API
 
 
             services.AddApplicationServices();
+
+            services.AddIdentityServices(_configuration);
 
             services.AddSwaggerDocumentation();
 
@@ -81,6 +89,7 @@ namespace API
             // Используется до авторизации:
             app.UseCors("CorsPolicy");
 
+            app.UseAuthentication(); // Добавили после настройки Token и ДО авторизации
             app.UseAuthorization();
 
             app.UseSwaggerDocumentation();
