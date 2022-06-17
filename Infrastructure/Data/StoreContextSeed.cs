@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data
@@ -55,6 +56,23 @@ namespace Infrastructure.Data
                     {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                         context.Products.Add(item);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    }
+
+                    await context.SaveChangesAsync();
+                }
+
+                if (!context.DeliveryMethods.Any())
+                {
+                    const string PathProducts = "../Infrastructure/Data/SeedData/delivery.json";
+                    var dmData = File.ReadAllText(PathProducts);
+
+                    var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
+
+                    foreach (var item in methods)
+                    {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                        context.DeliveryMethods.Add(item);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
 
