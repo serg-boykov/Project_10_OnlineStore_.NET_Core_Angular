@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AccountService } from '../account/account.service';
+import { BasketService } from '../basket/basket.service';
+import { Observable } from 'rxjs';
+import { IBasketTotals } from '../shared/models/basket';
 
 @Component({
   selector: 'app-checkout',
@@ -8,16 +11,19 @@ import { AccountService } from '../account/account.service';
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
+  basketTotals$!: Observable<IBasketTotals>;
   checkoutForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private accountService: AccountService) { }
+  constructor(private fb: FormBuilder, private accountService: AccountService, private basketService: BasketService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.createCheckoutForm();
     this.getAddressFormValues();
+    this.getDeliveryMethodValue();
+    this.basketTotals$ = this.basketService.basketTotal$;
   }
 
-  // Wi can validate each of these forms individually
+  // We can validate each of these forms individually
   // and we can also validate the form as a whole.
   createCheckoutForm() {
     this.checkoutForm = this.fb.group({
@@ -35,7 +41,7 @@ export class CheckoutComponent implements OnInit {
       paymentForm: this.fb.group({
         nameOnCard: [null, Validators.required]
       })
-    })
+    });
   }
 
   getAddressFormValues() {
@@ -47,4 +53,12 @@ export class CheckoutComponent implements OnInit {
       console.log(error);
     });
   }
+
+  getDeliveryMethodValue() {
+    const basket = this.basketService.getCurrentBasketValue();
+    if (basket.deliveryMethodId !== null) {
+      this.checkoutForm.get('deliveryForm')?.get('deliveryMethod')?.patchValue(basket.deliveryMethodId?.toString());
+    }
+  }
+
 }
