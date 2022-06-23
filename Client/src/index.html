@@ -9,5 +9,11 @@
 </head>
 <body>
   <app-root></app-root>
+  
+  <!-- Обязательно нужно указать эту строку,
+    иначе не будет работать declare var Stripe: any; 
+    в checkout-payment.component.ts -->
+  <script src="https://js.stripe.com/v3/"></script>
+
 </body>
 </html>
