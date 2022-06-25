@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
@@ -11,9 +12,11 @@ namespace Infrastructure.Data
         {
             try
             {
+                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
                 if (!context.ProductBrands.Any())
                 {
-                    const string PathBrands = "../Infrastructure/Data/SeedData/brands.json";
+                    string PathBrands = path + @"/Data/SeedData/brands.json";
                     var brandsData = File.ReadAllText(PathBrands);
 
                     var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
@@ -30,7 +33,7 @@ namespace Infrastructure.Data
 
                 if (!context.ProductTypes.Any())
                 {
-                    const string PathTypes = "../Infrastructure/Data/SeedData/types.json";
+                    string PathTypes = path + @"/Data/SeedData/types.json";
                     var typesData = File.ReadAllText(PathTypes);
 
                     var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
@@ -47,7 +50,7 @@ namespace Infrastructure.Data
 
                 if (!context.Products.Any())
                 {
-                    const string PathProducts = "../Infrastructure/Data/SeedData/products.json";
+                    string PathProducts = path + @"/Data/SeedData/products.json";
                     var productsData = File.ReadAllText(PathProducts);
 
                     var products = JsonSerializer.Deserialize<List<Product>>(productsData);
@@ -64,7 +67,7 @@ namespace Infrastructure.Data
 
                 if (!context.DeliveryMethods.Any())
                 {
-                    const string PathProducts = "../Infrastructure/Data/SeedData/delivery.json";
+                    string PathProducts = path + @"/Data/SeedData/delivery.json";
                     var dmData = File.ReadAllText(PathProducts);
 
                     var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
