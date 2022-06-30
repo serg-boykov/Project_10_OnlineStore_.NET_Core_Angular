@@ -87,12 +87,7 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app/*, IWebHostEnvironment env*/)
         {
-            // if (env.IsDevelopment())
-            // {
-            //     app.UseDeveloperExceptionPage();
-            // }
-
-            // Вместо этого нашу реализацию Middleware:
+            // Собственная реализацию Middleware вместо app.UseDeveloperExceptionPage()
             app.UseMiddleware<ExceptionMiddleware>();
 
             // So in the event that request comes into our API server

@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/c
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BusyService } from "../services/busy.service";
-import { delay, finalize } from "rxjs/operators";
+import { finalize } from "rxjs/operators";
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
